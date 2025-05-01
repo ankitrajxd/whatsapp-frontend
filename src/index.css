@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+
+@theme{
+    --color-primary: #005C4B;
+    --color-secondary: #202C33;
+    --color-background: #111B21;
+    --color-background-dark: #0B141A;
+    --color-surface: #2A3942;
+    --color-accent: #00A884;
+
+
+    --font-dmsans: 'DM Sans', sans-serif;
+}
+
+html {
+    font-family: 'DM Sans', sans-serif;
+}
