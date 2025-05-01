@@ -9,11 +9,15 @@ const SideBar = () => {
     <div className="flex h-full justify-between flex-col items-center py-4">
       <div className="flex items-center flex-col gap-5">
         <Link to={"/"}>
-          <div className="flex items-center justify-center w-full bg-accent rounded-full p-2">
+          <div
+            className={`${
+              location.pathname === "/" ? "bg-accent/30" : ""
+            } flex items-center justify-center w-full rounded-full p-2`}
+          >
             <img
               src="/icons/all-messages-logo.png"
               alt="all messages"
-              className={`${location.pathname === "/chat" ? "invert" : "w-5"}`}
+              className="w-5 invert"
             />
           </div>
         </Link>
@@ -29,16 +33,28 @@ const SideBar = () => {
         />
       </div>
 
-      <div className="flex items-center flex-col gap-5">
+      <div className="flex items-center flex-col gap-4">
         <Link to={"/settings"}>
-          <img
-            src="/icons/settings-logo.png"
-            alt="community"
-            className="invert w-5"
-          />
+          <div
+            className={`${
+              location.pathname === "/settings" ? "bg-accent/30" : ""
+            } flex items-center justify-center w-full rounded-full p-2`}
+          >
+            <img
+              src="/icons/settings-logo.png"
+              alt="community"
+              className="invert w-5"
+            />
+          </div>
         </Link>
         <Link to={"/profile"}>
-          <div className="">
+          <div
+            className={`${
+              location.pathname === "/profile"
+                ? "outline-accent outline-2 rounded-full"
+                : ""
+            } flex items-center justify-center w-full rounded-full`}
+          >
             <img
               src="/images/user.jpg"
               alt="user"

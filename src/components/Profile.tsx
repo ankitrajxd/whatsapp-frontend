@@ -1,5 +1,7 @@
 const Profile = () => {
-  return <div>Profile</div>;
+  return (
+    <div className="grid place-content-center h-screen">User Profile Page</div>
+  );
 };
 
 export default Profile;
