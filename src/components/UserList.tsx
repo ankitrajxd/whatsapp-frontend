@@ -22,7 +22,7 @@ export const UserList = () => {
           </div>
         </div>
 
-        <div className=" ">
+        <div className="">
           <div className="p-4 pb-0">
             <div className="flex items-center gap-2 bg-surface/70 rounded-md p-2 ">
               <img src="/icons/search-icon.png" className="w-5 invert ml-2" />
