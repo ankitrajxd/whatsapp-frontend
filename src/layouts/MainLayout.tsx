@@ -5,11 +5,11 @@ import { UserList } from "../components/UserList";
 export default function MainLayout() {
   return (
     <div className="flex">
-      <div className="w-[4%] h-screen bg-surface  text-white">
+      <div className="w-[4%] h-screen bg-surface  text-white border-r border-gray-700">
         <SideBar />
       </div>
 
-      <div className="w-[25%] h-screen bg-background text-white overflow-y-auto">
+      <div className="w-[25%] h-screen bg-background text-white overflow-y-auto border border-gray-800" >
         <UserList />
       </div>
       <div className="flex-1 h-screen bg-background-dark text-white overflow-y-auto">

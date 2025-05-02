@@ -11,7 +11,9 @@ const SideBar = () => {
         <Link to={"/"}>
           <div
             className={`${
-              location.pathname === "/" ? "bg-accent/30" : ""
+              location.pathname === "/" || location.pathname.startsWith("/chat")
+                ? "bg-accent/30"
+                : ""
             } flex items-center justify-center w-full rounded-full p-2`}
           >
             <img
