@@ -7,12 +7,12 @@ const SideBar = () => {
 
   return (
     <div className="flex h-full justify-between flex-col items-center py-4">
-      <div className="flex items-center flex-col gap-5">
-        <Link to={"/"}>
+      <div className="flex items-center flex-col gap-5 px-2">
+        <Link to={"/"} className="">
           <div
             className={`${
               location.pathname === "/" || location.pathname.startsWith("/chat")
-                ? "bg-accent/30"
+                ? "bg-zinc-500/25"
                 : ""
             } flex items-center justify-center w-full rounded-full p-2`}
           >
@@ -39,7 +39,7 @@ const SideBar = () => {
         <Link to={"/settings"}>
           <div
             className={`${
-              location.pathname === "/settings" ? "bg-accent/30" : ""
+              location.pathname === "/settings" ? "bg-zinc-500/25" : ""
             } flex items-center justify-center w-full rounded-full p-2`}
           >
             <img
