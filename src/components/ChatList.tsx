@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 
-export const UserList = () => {
+export const ChatList = () => {
   return (
     <div className=" h-full">
       {/* header */}
@@ -25,7 +25,7 @@ export const UserList = () => {
         <div className="">
           <div className="p-4 pb-0">
             <div className="flex items-center gap-2 bg-surface/70 rounded-md p-2 ">
-              <img src="/icons/search-icon.png" className="w-5 invert ml-2" />
+              <img src="/icons/search-icon.png" className="w-5 invert" />
               <input
                 type="text"
                 placeholder="Search"
@@ -39,13 +39,13 @@ export const UserList = () => {
               <span className="text-[12px] px-2 py-0.5 bg-accent/20 text-accent rounded-full">
                 All
               </span>
-              <span className="text-[12px] px-2 py-0.5 bg-accent/20 text-zinc-400 rounded-full">
+              <span className="text-[12px] px-2 py-0.5 bg-secondary text-zinc-400 rounded-full">
                 Unread
               </span>
-              <span className="text-[12px] px-2 py-0.5 bg-accent/20 text-zinc-400 rounded-full">
+              <span className="text-[12px] px-2 py-0.5 bg-secondary text-zinc-400 rounded-full">
                 Favourites
               </span>
-              <span className="text-[12px] px-2 py-0.5 bg-accent/20 text-zinc-400 rounded-full">
+              <span className="text-[12px] px-2 py-0.5 bg-secondary text-zinc-400 rounded-full">
                 Groups
               </span>
             </div>
@@ -65,6 +65,13 @@ export const UserList = () => {
               link="/chat/john"
               user="John"
               message="Did you install the right npm package?"
+            />
+            <UserChat
+              image="/images/lisa.jpg"
+              link="/chat/lisa"
+              user="Lisa Marie"
+              time="22:30"
+              message="Yo whatsupp!"
             />
           </div>
         </div>
