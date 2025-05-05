@@ -17,7 +17,7 @@ export default function ChatWindow() {
           </div>
         </div>
       </div>
-      <div className="flex-1 flex overflow-y-auto ">
+      <div className="flex-1 flex overflow-y-auto no-scrollbar">
         <div className="flex flex-col justify-between p-3 w-full">
           <div
             className="flex w-full items-center justify-center 
@@ -29,7 +29,7 @@ export default function ChatWindow() {
               Not even Our team can read or listen to them. Tap to learn more.
             </p>
           </div>
-          <div>
+          <div className="pb-4 mt-12">
             <MessageBubble time="22:30" isSentByUser message="Hello ankit" />
             <MessageBubble time="22:33" message="Hiii! How you doing?" />
             <MessageBubble
@@ -50,6 +50,7 @@ export default function ChatWindow() {
             <MessageBubble time="01:11" message="okay bye" />
             <MessageBubble time="01:11" message="see ya" />
             <MessageBubble time="01:11" message="✌️" />
+            <MessageBubble isSentByUser time="01:12" message="kk" />
           </div>
         </div>
       </div>
@@ -57,17 +58,17 @@ export default function ChatWindow() {
         <div className="flex gap-3 items-center h-full p-3">
           <div>
             <img
-              src="/icons/stickers-icon.png"
-              className="size-6 invert opacity-30"
-            />
-          </div>
-          <div>
-            <img
               src="/icons/media-upload-icon.png"
               className="size-6 invert opacity-30"
             />
           </div>
           <div className="flex-1 flex items-center bg-surface rounded-md  ">
+            <div className="pl-2">
+              <img
+                src="/icons/stickers-icon.png"
+                className="size-5 invert opacity-30"
+              />
+            </div>
             <input
               type="text"
               placeholder="Type a message"
@@ -95,16 +96,18 @@ interface MessageBubbleProps {
 function MessageBubble({ message, isSentByUser, time }: MessageBubbleProps) {
   return (
     <div className={`flex ${isSentByUser ? "justify-end" : "justify-start"} `}>
-      <p
+      <span
         className={`${
-          isSentByUser ? "bg-accent/40" : "bg-secondary"
-        } text-sm  m-2 mb-0 p-1.5 rounded-full px-4 flex w-fit relative pr-10`}
+          isSentByUser
+            ? "bg-accent/40 rounded-tr-xs rounded-b-xl rounded-tl-xl"
+            : "bg-secondary rounded-tl-xs rounded-b-xl rounded-tr-xl"
+        } text-sm  m-2 mb-0 p-1.5  px-4 flex w-fit relative pr-10`}
       >
         {message}
         <span className="text-[9px] absolute right-2 bottom-1 opacity-60">
           {time}
         </span>
-      </p>
+      </span>
     </div>
   );
 }
