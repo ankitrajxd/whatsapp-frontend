@@ -25,14 +25,23 @@ const SideBar = () => {
         </Link>
         <img
           src="/icons/all-statuses-logo.png"
-          alt="all messages"
+          alt="all stauses"
           className="invert w-5"
         />
-        <img
-          src="/icons/community-logo.png"
-          alt="community"
-          className="invert w-5"
-        />
+
+        <Link to={"/contacts"} className="">
+          <div
+            className={`${
+              location.pathname.startsWith("/contacts") ? "bg-zinc-500/25" : ""
+            } flex items-center justify-center w-full rounded-full p-2`}
+          >
+            <img
+              src="/icons/community-logo.png"
+              alt="contacts"
+              className="invert w-5"
+            />
+          </div>
+        </Link>
       </div>
 
       <div className="flex items-center flex-col gap-4">

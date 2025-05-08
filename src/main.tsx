@@ -10,6 +10,8 @@ import Profile from "./components/Profile.tsx";
 import LoginPage from "./components/LoginPage.tsx";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Contacts } from "./components/Contacts.tsx";
+import ContactsLayout from "./layouts/ContactsLayout.tsx";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +28,11 @@ createRoot(document.getElementById("root")!).render(
             <Route path="chat/:userId" element={<ChatWindow />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<Profile />} />
+          </Route>
+        </Routes>
+        <Routes>
+          <Route path="/contacts" element={<ContactsLayout />}>
+            <Route index path="/contacts" element={<Contacts />} />
           </Route>
         </Routes>
       </BrowserRouter>

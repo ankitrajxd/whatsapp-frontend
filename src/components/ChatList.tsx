@@ -9,14 +9,16 @@ export const ChatList = () => {
           <h2 className="font-bold text-lg">Chats</h2>
 
           <div className="flex items-center gap-5">
-            <img
-              src="/icons/start-new-chat.png"
-              alt="Start new chat"
-              className="invert size-5"
-            />
+            <Link to={"/contacts"}>
+              <img
+                src="/icons/start-new-chat.png"
+                alt="Start new chat"
+                className="invert size-5"
+              />
+            </Link>
             <img
               src="/icons/three-dot-menu.png"
-              alt="Start new chat"
+              alt="More options"
               className="invert size-5"
             />
           </div>
