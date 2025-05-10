@@ -1,6 +1,33 @@
 import { Link, useLocation } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+
+interface Chat {
+  _id: string;
+  users: string[];
+  createdAt: Date;
+}
+
+interface ChatResponse {
+  success: boolean;
+  data: Chat[];
+}
 
 export const ChatList = () => {
+  const { data, isLoading, error } = useQuery<ChatResponse>({
+    queryKey: ["chats"],
+    queryFn: async () => {
+      const res = await axios.get<ChatResponse>(
+        "http://localhost:3000/chats/all",
+        {
+          withCredentials: true,
+        }
+      );
+      return res.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
   return (
     <div className=" h-full">
       {/* header */}
@@ -55,27 +82,25 @@ export const ChatList = () => {
 
           {/* chat list */}
           <div className="overflow-y-auto">
-            <UserChat
-              image="/images/user.jpg"
-              time="yesterday"
-              link="/chat/ankit"
-              user="Ankit"
-              message="Hello world ✌️"
-            />
-            <UserChat
-              image="/images/john.jpg"
-              link="/chat/john"
-              user="John"
-              message="Did you install the right npm package?"
-            />
-            <UserChat
-              image="/images/lisa.jpg"
-              link="/chat/lisa"
-              user="Lisa Marie"
-              time="22:30"
-              message="Yo whatsupp!"
-            />
+            {isLoading && <div className="p-4">Loading...</div>}
+            {error && (
+              <div className="p-4 text-red-500">Failed to load chats.</div>
+            )}
+            {data?.data.map((chat) => (
+              <UserChat
+                key={chat._id}
+                image="/icons/user-avatar.png" // Placeholder image
+                user={chat.users[1]}
+                link={`/chat/${chat._id}`}
+              />
+            ))}
           </div>
+
+          {data?.data.length == 0 && (
+            <div>
+              <div className="flex items-center text-sm text-zinc-400 gap-1.5 mt-1.5 p-4 pt-1.5"></div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -85,17 +110,30 @@ export const ChatList = () => {
 function UserChat({
   image,
   user,
-  message,
   link,
   time = "1m ago",
 }: {
   image: string;
   user: string;
-  message: string;
   link: string;
   time?: string;
 }) {
   const location = useLocation();
+
+  // fetch the other user
+  const { data } = useQuery({
+    queryKey: ["user", user],
+    queryFn: async () => {
+      const res = await axios.get(`http://localhost:3000/users/${user}`, {
+        withCredentials: true,
+      });
+      return res.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Use fetched user data if available
+  const userData = data?.message;
 
   return (
     <Link to={link} className="flex flex-col gap-2 ">
@@ -105,17 +143,21 @@ function UserChat({
         }`}
       >
         <div>
-          <img src={image} alt="user" className="size-10 rounded-full" />
+          <img
+            src={userData?.profileImage || image}
+            alt={userData?.name || "user"}
+            className="size-10 rounded-full"
+          />
         </div>
 
         <div className="flex flex-col flex-1 gap-0">
           <p className="flex items-center justify-between text-sm">
-            <span>{user}</span>
+            <span>{userData?.name || user}</span>
             <span className="text-xs text-zinc-400">{time}</span>
           </p>
-          <span className="text-xs text-zinc-400 ">
-            <span>{message}</span>
-          </span>
+          {userData?.email && (
+            <span className="text-xs text-zinc-400">{userData.email}</span>
+          )}
         </div>
       </div>
     </Link>

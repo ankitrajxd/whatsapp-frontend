@@ -1,20 +1,85 @@
-import { useParams } from "react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router";
+
+// interface for response data
+interface ChatResponse {
+  message: {
+    _id: string;
+    name: string;
+    profileImage: string;
+  };
+}
 
 export default function ChatWindow() {
-  const { userId } = useParams();
+  const { chatId } = useParams();
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { data } = useQuery<ChatResponse>({
+    queryKey: ["chat", chatId],
+    queryFn: async () => {
+      const res = await axios.get(`http://localhost:3000/chats/${chatId}`, {
+        withCredentials: true,
+      });
+
+      if (res.status !== 200) {
+        throw new Error("Failed to fetch chat data");
+      }
+
+      // fetch the user details of the other user in the chat
+      const otheruser = await axios.get(
+        `http://localhost:3000/users/${res.data.message}`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      return otheruser.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // filter out the current user from the users array and fetch the other user to display their name and image
 
   return (
     <div className="flex flex-col justify-between h-full">
       <div className="bg-secondary h-12">
-        <div className="flex items-center h-full ml-2">
+        <div
+          className="flex items-center justify-between h-full mx-2 mr-3
+        "
+        >
           <div className="flex items-center gap-2">
             <img
-              src="/images/user.jpg"
+              src={data?.message.profileImage}
               alt="user"
               className="size-8 rounded-full"
             />
-            <span className="text-sm">{userId}</span>
+            <span className="text-sm">{data?.message.name}</span>
           </div>
+          <button
+            onClick={async () => {
+              // delete the chat
+              await axios.delete(
+                `http://localhost:3000/chats/delete/${chatId}`,
+                {
+                  withCredentials: true,
+                }
+              );
+
+              //  clear the cache for the chat list
+              queryClient.invalidateQueries({
+                queryKey: ["chats"],
+              });
+
+              // navigate to the chat list
+              navigate("/");
+            }}
+            className="text-red-500 text-sm cursor-pointer hover:opacity-80"
+          >
+            delete
+          </button>
         </div>
       </div>
       <div className="flex-1 flex overflow-y-auto no-scrollbar">

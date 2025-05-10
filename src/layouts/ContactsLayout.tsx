@@ -14,7 +14,7 @@ export default function ContactsLayout() {
           <Outlet />
         </div>
         <div className="flex-1 h-screen bg-background-dark text-white overflow-y-auto">
-          <Welcome /> {/* nested routes will render here */}
+          <Welcome />
         </div>
       </div>
 

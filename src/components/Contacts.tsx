@@ -1,28 +1,42 @@
-import { Link, useLocation } from "react-router";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { useLocation, useNavigate } from "react-router";
 
-const contacts = [
-  {
-    id: "ankit",
-    name: "Ankit Sharma",
-    number: "+91 9876543210",
-    image: "/images/user.jpg",
-  },
-  {
-    id: "john",
-    name: "John Doe",
-    number: "+1 555 123 4567",
-    image: "/images/john.jpg",
-  },
-  {
-    id: "lisa",
-    name: "Lisa Marie",
-    number: "+44 20 7946 0958",
-    image: "/images/lisa.jpg",
-  },
-];
+interface Contact {
+  _id: string;
+  name: string;
+  email: string;
+  profileImage: string;
+}
+
+interface ContactResponse {
+  success: boolean;
+  message: Contact[];
+}
 
 export const Contacts = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, error } = useQuery<ContactResponse>({
+    queryKey: ["contacts"],
+    queryFn: async () => {
+      const res = await axios.get<ContactResponse>(
+        "http://localhost:3000/users",
+        {
+          withCredentials: true,
+        }
+      );
+      return res.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
   const location = useLocation();
+
+  if (isLoading) return <div className="p-4">Loading...</div>;
+  if (error)
+    return <div className="p-4 text-red-500">Failed to load contacts.</div>;
 
   return (
     <div className="h-full">
@@ -41,11 +55,43 @@ export const Contacts = () => {
           </div>
         </div>
         <div className="overflow-y-auto mt-5">
-          {contacts.map((contact) => (
+          {data?.message.map((contact) => (
             <ContactItem
-              key={contact.id}
+              onclick={async () => {
+                try {
+                  const chat = await axios.post(
+                    `http://localhost:3000/chats`,
+                    { receiverId: contact._id },
+                    { withCredentials: true }
+                  );
+                  if (chat.data.success) {
+                    navigate(`/chat/${chat.data.data._id}`);
+                    return;
+                  }
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                } catch (err: any) {
+                  if (err.response && err.response.status === 404) {
+                    // Chat not found, create a new one
+                    const newChat = await axios.post(
+                      `http://localhost:3000/chats/new`,
+                      { otherUser: contact._id },
+                      { withCredentials: true }
+                    );
+                    if (newChat.data.success) {
+                      // clear cache
+                      queryClient.invalidateQueries({ queryKey: ["chats"] });
+                      navigate(`/chat/${newChat.data.data._id}`);
+                      return;
+                    }
+                  } else {
+                    // Handle other errors
+                    alert("Failed to open chat.");
+                  }
+                }
+              }}
+              key={contact._id}
               contact={contact}
-              selected={location.pathname === `/contacts/${contact.id}`}
+              selected={location.pathname === `/contacts/${contact._id}`}
             />
           ))}
         </div>
@@ -57,27 +103,29 @@ export const Contacts = () => {
 function ContactItem({
   contact,
   selected,
+  onclick,
 }: {
-  contact: { id: string; name: string; number: string; image: string };
+  contact: { _id: string; name: string; email: string; profileImage: string };
   selected: boolean;
+  onclick?: () => void;
 }) {
   return (
-    <Link to={`/chat/${contact.id}`} className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2" onClick={onclick}>
       <div
         className={`flex items-center gap-4 cursor-pointer hover:bg-surface/70 px-4 py-3 border-b border-surface/50 ${
           selected ? "bg-surface/70" : ""
         }`}
       >
         <img
-          src={contact.image}
+          src={contact.profileImage}
           alt={contact.name}
           className="size-10 rounded-full"
         />
         <div className="flex flex-col flex-1 gap-0">
           <span className="text-sm font-medium">{contact.name}</span>
-          <span className="text-xs text-zinc-400">{contact.number}</span>
+          <span className="text-xs text-zinc-400">{contact.email}</span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

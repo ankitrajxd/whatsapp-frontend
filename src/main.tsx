@@ -8,6 +8,7 @@ import ChatWindow from "./components/ChatWindow.tsx";
 import Settings from "./components/Settings.tsx";
 import Profile from "./components/Profile.tsx";
 import LoginPage from "./components/LoginPage.tsx";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Contacts } from "./components/Contacts.tsx";
@@ -18,21 +19,18 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={false} />
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-        </Routes>
-        <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Welcome />} />
-            <Route path="chat/:userId" element={<ChatWindow />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="chat/:chatId" element={<ChatWindow />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
-        </Routes>
-        <Routes>
           <Route path="/contacts" element={<ContactsLayout />}>
-            <Route index path="/contacts" element={<Contacts />} />
+            <Route index element={<Contacts />} />
           </Route>
         </Routes>
       </BrowserRouter>
