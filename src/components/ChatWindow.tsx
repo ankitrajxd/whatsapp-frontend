@@ -58,28 +58,29 @@ export default function ChatWindow() {
             />
             <span className="text-sm">{data?.message.name}</span>
           </div>
-          <button
-            onClick={async () => {
-              // delete the chat
-              await axios.delete(
-                `http://localhost:3000/chats/delete/${chatId}`,
-                {
-                  withCredentials: true,
-                }
-              );
-
-              //  clear the cache for the chat list
-              queryClient.invalidateQueries({
-                queryKey: ["chats"],
-              });
-
-              // navigate to the chat list
-              navigate("/");
-            }}
-            className="text-red-500 text-sm cursor-pointer hover:opacity-80"
-          >
-            delete
-          </button>
+          <div className="space-x-3 flex items-center">
+            <button className="text-sm text-emerald-500/75">clear chat</button>
+            <button
+              onClick={async () => {
+                // delete the chat
+                await axios.delete(
+                  `http://localhost:3000/chats/delete/${chatId}`,
+                  {
+                    withCredentials: true,
+                  }
+                );
+                //  clear the cache for the chat list
+                queryClient.invalidateQueries({
+                  queryKey: ["chats"],
+                });
+                // navigate to the chat list
+                navigate("/");
+              }}
+              className="text-red-500 text-sm cursor-pointer hover:opacity-80"
+            >
+              delete
+            </button>
+          </div>
         </div>
       </div>
       <div className="flex-1 flex overflow-y-auto no-scrollbar">

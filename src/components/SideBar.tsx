@@ -1,6 +1,21 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { Link, useLocation } from "react-router";
 
 const SideBar = () => {
+  const { data } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const res = await axios.get("http://localhost:3000/users/me", {
+        withCredentials: true,
+      });
+      console.log(res.data.message);
+
+      return res.data.message;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
   const location = useLocation();
 
   console.log(location.pathname);
@@ -67,7 +82,7 @@ const SideBar = () => {
             } flex items-center justify-center w-full rounded-full`}
           >
             <img
-              src="/images/user.jpg"
+              src={data?.profileImage}
               alt="user"
               className="w-8 rounded-full"
             />

@@ -9,7 +9,7 @@ interface Chat {
 }
 
 interface ChatResponse {
-  success: boolean;
+  currentUserId: string;
   data: Chat[];
 }
 
@@ -17,13 +17,18 @@ export const ChatList = () => {
   const { data, isLoading, error } = useQuery<ChatResponse>({
     queryKey: ["chats"],
     queryFn: async () => {
-      const res = await axios.get<ChatResponse>(
-        "http://localhost:3000/chats/all",
-        {
-          withCredentials: true,
-        }
-      );
-      return res.data;
+      const res = await axios.get("http://localhost:3000/chats/all", {
+        withCredentials: true,
+      });
+
+      const currentUserRes = await axios.get("http://localhost:3000/users/me", {
+        withCredentials: true,
+      });
+
+      return {
+        currentUserId: currentUserRes.data.message.id,
+        data: res.data.data,
+      };
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -90,7 +95,9 @@ export const ChatList = () => {
               <UserChat
                 key={chat._id}
                 image="/icons/user-avatar.png" // Placeholder image
-                user={chat.users[1]}
+                user={
+                  chat.users.filter((user) => user !== data.currentUserId)[0]
+                }
                 link={`/chat/${chat._id}`}
               />
             ))}
