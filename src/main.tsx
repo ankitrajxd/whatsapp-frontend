@@ -9,10 +9,10 @@ import Settings from "./components/Settings.tsx";
 import Profile from "./components/Profile.tsx";
 import LoginPage from "./components/LoginPage.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Contacts } from "./components/Contacts.tsx";
 import ContactsLayout from "./layouts/ContactsLayout.tsx";
+import About from "./components/About.tsx";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +28,8 @@ createRoot(document.getElementById("root")!).render(
             <Route path="chat/:chatId" element={<ChatWindow />} />
             <Route path="settings" element={<Settings />} />
             <Route path="profile" element={<Profile />} />
+            <Route path="/about/:userId" element={<About />} />{" "}
+            {/* Added About component */}
           </Route>
           <Route path="/contacts" element={<ContactsLayout />}>
             <Route index element={<Contacts />} />

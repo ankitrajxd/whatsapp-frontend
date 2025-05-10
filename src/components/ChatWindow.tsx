@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 
 // interface for response data
 interface ChatResponse {
@@ -16,7 +16,6 @@ export default function ChatWindow() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data } = useQuery<ChatResponse>({
     queryKey: ["chat", chatId],
     queryFn: async () => {
@@ -36,6 +35,18 @@ export default function ChatWindow() {
         }
       );
 
+      //  fetch all the messages related to the chat
+      const messagesRes = await axios.get(
+        `http://localhost:3000/chats/${chatId}/messages`,
+        {
+          withCredentials: true,
+        }
+      );
+
+      console.log("messagesRes", messagesRes.data);
+      // return the messages and the other user data
+      // render them accordingly
+
       return otheruser.data;
     },
     staleTime: 5 * 60 * 1000,
@@ -50,16 +61,21 @@ export default function ChatWindow() {
           className="flex items-center justify-between h-full mx-2 mr-3
         "
         >
-          <div className="flex items-center gap-2">
-            <img
-              src={data?.message.profileImage}
-              alt="user"
-              className="size-8 rounded-full"
-            />
-            <span className="text-sm">{data?.message.name}</span>
-          </div>
-          <div className="space-x-3 flex items-center">
-            <button className="text-sm text-emerald-500/75">clear chat</button>
+          <Link to={`/about/${data?.message._id}`} className="relative">
+            <div className="flex items-center gap-2">
+              <img
+                src={data?.message.profileImage}
+                alt="user"
+                className="size-8 rounded-full"
+              />
+              <span className="text-sm">{data?.message.name}</span>
+            </div>
+          </Link>
+
+          <div className="space-x-5 flex items-center">
+            <button className="text-sm text-emerald-500/75 hover:opacity-80 cursor-pointer">
+              clear chat
+            </button>
             <button
               onClick={async () => {
                 // delete the chat

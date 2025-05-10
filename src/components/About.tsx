@@ -1,21 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router";
 import { User } from "../store/AuthStore";
 import axios from "axios";
 
-const Profile = () => {
+const About = () => {
+  const { userId } = useParams();
   const { data } = useQuery<User>({
-    queryKey: ["user"],
+    queryKey: ["aboutUser", userId],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:3000/users/me", {
+      const res = await axios.get(`http://localhost:3000/users/${userId}`, {
         withCredentials: true,
       });
       return res.data.message;
     },
     staleTime: 5 * 60 * 1000,
   });
-
   return (
-    <div className="flex justify-center items-center h-full bg-background-dark">
+    <div className="flex justify-center items-center min-h-screen bg-background-dark">
       <div className="w-full max-w-sm bg-background rounded-lg shadow border border-surface p-0">
         {/* Header */}
         <div className="flex flex-col items-center py-8 px-6 border-b border-surface">
@@ -51,4 +52,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default About;
