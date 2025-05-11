@@ -35,14 +35,14 @@ const About = () => {
         {/* Details */}
         <div className="px-8 py-6 flex flex-col gap-6">
           <div>
-            <div className="text-xs text-zinc-400 mb-1">Your Name</div>
-            <div className="bg-surface rounded-md px-4 py-2 text-white font-medium">
+            <div className="text-xs text-zinc-400 mb-1">Full Name</div>
+            <div className="bg-surface rounded-md text-sm px-4 py-2 text-white font-medium">
               {data?.name}
             </div>
           </div>
           <div>
-            <div className="text-xs text-zinc-400 mb-1">Email</div>
-            <div className="bg-surface rounded-md px-4 py-2 text-zinc-300">
+            <div className="text-xs text-zinc-400 mb-1">Email Address</div>
+            <div className="bg-surface rounded-md text-sm px-4 py-2 text-zinc-300">
               {data?.email}
             </div>
           </div>
