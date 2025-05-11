@@ -1,7 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
+import { io, Socket } from "socket.io-client";
 
 // interface for response data
 interface ChatUser {
@@ -25,6 +26,8 @@ interface ChatResponse {
 
 export default function ChatWindow() {
   const [msgText, setMsgText] = useState("");
+  const socketRef = useRef<Socket | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const { chatId } = useParams();
   const queryClient = useQueryClient();
@@ -65,6 +68,42 @@ export default function ChatWindow() {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  useEffect(() => {
+    // Only connect socket once on mount
+    if (!socketRef.current) {
+      socketRef.current = io("http://localhost:3000", {
+        withCredentials: true,
+      });
+    }
+    const socket = socketRef.current;
+
+    // Join the current chat room
+    if (chatId) {
+      socket.emit("joinChat", chatId);
+    }
+
+    // Listen for new messages
+    socket.on("newMessage", (message) => {
+      console.log(message);
+      refetch(); // not very optimal // todo - optimize this
+    });
+
+    // Cleanup on unmount or chatId change
+    return () => {
+      if (chatId) {
+        socket.emit("leaveChat", chatId);
+      }
+      socket.off("newMessage");
+    };
+  }, [chatId, refetch]);
+
+  useEffect(() => {
+    // Scroll to the last message when messages change
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [data?.messages]);
 
   return (
     <div className="flex flex-col justify-between h-full">
@@ -145,11 +184,34 @@ export default function ChatWindow() {
                 message={msg.message ?? msg.content ?? ""}
               />
             ))}
+            <div ref={messagesEndRef} />
           </div>
         </div>
       </div>
       <div className="bg-secondary h-12">
-        <div className="flex gap-3 items-center h-full p-3">
+        <form
+          className="flex gap-3 items-center h-full p-3"
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (!msgText.trim()) return;
+            // send message to backend
+            const newMsg = {
+              reciever: data?.user._id as string,
+              message: msgText,
+            };
+
+            await axios.post(
+              `http://localhost:3000/chats/${chatId}/messages`,
+              newMsg,
+              {
+                withCredentials: true,
+              }
+            );
+            setMsgText("");
+            // refetch messages
+            refetch();
+          }}
+        >
           <div>
             <img
               src="/icons/media-upload-icon.png"
@@ -171,34 +233,13 @@ export default function ChatWindow() {
               className="flex-1 outline-none text-sm py-1.5 pl-3 placeholder:opacity-50"
             />
           </div>
-          <div
-            className="cursor-pointer"
-            onClick={async () => {
-              if (!msgText.trim()) return;
-              // send message to backend
-              const newMsg = {
-                reciever: data?.user._id as string,
-                message: msgText,
-              };
-
-              await axios.post(
-                `http://localhost:3000/chats/${chatId}/messages`,
-                newMsg,
-                {
-                  withCredentials: true,
-                }
-              );
-              setMsgText("");
-              // refetch messages
-              refetch();
-            }}
-          >
+          <button type="submit" className="cursor-pointer">
             <img
               src="/icons/send-icon.png"
               className="size-5 invert opacity-30"
             />
-          </div>
-        </div>
+          </button>
+        </form>
       </div>
     </div>
   );

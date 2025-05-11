@@ -9,7 +9,6 @@ const SideBar = () => {
       const res = await axios.get("http://localhost:3000/users/me", {
         withCredentials: true,
       });
-      console.log(res.data.message);
 
       return res.data.message;
     },
@@ -17,8 +16,6 @@ const SideBar = () => {
   });
 
   const location = useLocation();
-
-  console.log(location.pathname);
 
   return (
     <div className="flex h-full justify-between  flex-col items-center py-4">
