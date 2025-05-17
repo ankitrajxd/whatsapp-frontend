@@ -8,6 +8,8 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
   const mutation = useMutation({
     mutationFn: () => login(email, password),
     onSuccess: (data) => {
@@ -22,7 +24,7 @@ const LoginPage = () => {
   });
 
   async function login(email: string, password: string) {
-    const res = await fetch("http://localhost:3000/auth/login", {
+    const res = await fetch(`${BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

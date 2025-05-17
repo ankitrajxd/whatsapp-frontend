@@ -17,16 +17,14 @@ interface ContactResponse {
 export const Contacts = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
   const { data, isLoading, error } = useQuery<ContactResponse>({
     queryKey: ["contacts"],
     queryFn: async () => {
-      const res = await axios.get<ContactResponse>(
-        "http://localhost:3000/users",
-        {
-          withCredentials: true,
-        }
-      );
+      const res = await axios.get<ContactResponse>(`${BACKEND_URL}/users`, {
+        withCredentials: true,
+      });
       return res.data;
     },
     staleTime: 5 * 60 * 1000,
@@ -60,7 +58,7 @@ export const Contacts = () => {
               onclick={async () => {
                 try {
                   const chat = await axios.post(
-                    `http://localhost:3000/chats`,
+                    `${BACKEND_URL}/chats`,
                     { receiverId: contact._id },
                     { withCredentials: true }
                   );
@@ -73,7 +71,7 @@ export const Contacts = () => {
                   if (err.response && err.response.status === 404) {
                     // Chat not found, create a new one
                     const newChat = await axios.post(
-                      `http://localhost:3000/chats/new`,
+                      `${BACKEND_URL}/chats/new`,
                       { otherUser: contact._id },
                       { withCredentials: true }
                     );

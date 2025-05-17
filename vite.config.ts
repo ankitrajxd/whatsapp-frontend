@@ -5,4 +5,9 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server: {
+    allowedHosts: [
+      "fy-precise-singapore-search.trycloudflare.com", // 👈 Add this
+    ],
+  },
 });

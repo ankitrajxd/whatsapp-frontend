@@ -2,6 +2,8 @@
 import axios from "axios";
 import { create } from "zustand";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 export interface User {
   id: string;
   name: string;
@@ -26,7 +28,7 @@ const useAuthStore = create<AuthState>((set) => ({
   setUser: (user: User) => set({ user }),
   fetchCurrentUser: async () => {
     try {
-      const response = await axios.get("http://localhost:3000/users/me", {
+      const response = await axios.get(`${BACKEND_URL}/users/me`, {
         withCredentials: true,
       });
       if (response.status === 200) {

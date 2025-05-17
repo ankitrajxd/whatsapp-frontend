@@ -2,11 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Link, useLocation } from "react-router";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const SideBar = () => {
   const { data } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:3000/users/me", {
+      const res = await axios.get(`${BACKEND_URL}/users/me`, {
         withCredentials: true,
       });
 

@@ -5,10 +5,11 @@ import axios from "axios";
 
 const About = () => {
   const { userId } = useParams();
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { data } = useQuery<User>({
     queryKey: ["aboutUser", userId],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:3000/users/${userId}`, {
+      const res = await axios.get(`${BACKEND_URL}/users/${userId}`, {
         withCredentials: true,
       });
       return res.data.message;

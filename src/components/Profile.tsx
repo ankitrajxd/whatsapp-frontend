@@ -3,10 +3,11 @@ import { User } from "../store/AuthStore";
 import axios from "axios";
 
 const Profile = () => {
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { data } = useQuery<User>({
     queryKey: ["user"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:3000/users/me", {
+      const res = await axios.get(`${BACKEND_URL}/users/me`, {
         withCredentials: true,
       });
       return res.data.message;

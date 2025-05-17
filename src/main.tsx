@@ -8,7 +8,7 @@ import ChatWindow from "./components/ChatWindow.tsx";
 import Settings from "./components/Settings.tsx";
 import Profile from "./components/Profile.tsx";
 import LoginPage from "./components/LoginPage.tsx";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+// import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Contacts } from "./components/Contacts.tsx";
 import ContactsLayout from "./layouts/ContactsLayout.tsx";
