@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
-import SideBar from "../components/SideBar";
 import { ChatList } from "../components/ChatList";
+import SideBar from "../components/SideBar";
 
 export default function MainLayout() {
   return (

@@ -17,7 +17,7 @@ interface AuthState {
   fetchCurrentUser: () => Promise<void>;
 }
 
-const useAuthStore = create<AuthState>((set) => ({
+const AuthStore = create<AuthState>((set) => ({
   user: {
     id: "",
     name: "",
@@ -32,7 +32,7 @@ const useAuthStore = create<AuthState>((set) => ({
         withCredentials: true,
       });
       if (response.status === 200) {
-        const user = response.data.message;
+        const user = response.data.data;
         set({ user });
       }
     } catch (error: unknown) {
@@ -49,4 +49,4 @@ const useAuthStore = create<AuthState>((set) => ({
   },
 }));
 
-export { useAuthStore };
+export { AuthStore };

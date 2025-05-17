@@ -12,7 +12,7 @@ const SideBar = () => {
         withCredentials: true,
       });
 
-      return res.data.message;
+      return res.data.data;
     },
     staleTime: 5 * 60 * 1000,
   });
