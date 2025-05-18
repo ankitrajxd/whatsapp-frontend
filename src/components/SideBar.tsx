@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Link, useLocation } from "react-router";
+import { useAuth } from "../hooks/useAuth";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
@@ -18,6 +19,8 @@ const SideBar = () => {
   });
 
   const location = useLocation();
+
+  const { logout } = useAuth();
 
   return (
     <div className="flex h-full justify-between  flex-col items-center py-4">
@@ -59,6 +62,7 @@ const SideBar = () => {
       </div>
 
       <div className="flex items-center flex-col gap-4">
+        <button className="text-xs cursor-pointer text-zinc-400 hover:text-red-600" onClick={() => logout()}>Logout</button>
         <Link to={"/settings"}>
           <div
             className={`${
@@ -87,6 +91,7 @@ const SideBar = () => {
             />
           </div>
         </Link>
+
       </div>
     </div>
   );

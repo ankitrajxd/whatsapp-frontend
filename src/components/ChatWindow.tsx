@@ -11,7 +11,7 @@ interface ChatUser {
   profileImage: string;
   email: string;
 }
-interface Message {
+export interface Message {
   _id: string;
   chatId: string;
   senderId: string;
@@ -23,14 +23,7 @@ interface ChatResponse {
   user: ChatUser;
   data: Message[];
 }
-interface MessageBubbleProps {
-  message: string;
-  isSentByUser?: boolean;
-  time: string;
-}
-//#endregion
 
-//#region API Helpers
 const fetchChatData = async (
   BACKEND_URL: string,
   chatId: string | undefined
@@ -108,28 +101,7 @@ const sendMessage = async (
     throw error;
   }
 };
-//#endregion
 
-//#region MessageBubble Component
-function MessageBubble({ message, isSentByUser, time }: MessageBubbleProps) {
-  return (
-    <div className={`flex ${isSentByUser ? "justify-end" : "justify-start"} `}>
-      <span
-        className={`${
-          isSentByUser
-            ? "bg-accent/40 rounded-tr-xs rounded-b-xl rounded-tl-xl"
-            : "bg-secondary rounded-tl-xs rounded-b-xl rounded-tr-xl"
-        } text-sm  m-2 mb-0 p-1.5  px-4 flex w-fit relative pr-10 max-w-sm`}
-      >
-        {message}
-        <span className="text-[9px] absolute right-2 bottom-1 opacity-60">
-          {time}
-        </span>
-      </span>
-    </div>
-  );
-}
-//#endregion
 
 export default function ChatWindow() {
   //#region Hooks and State
@@ -162,6 +134,7 @@ export default function ChatWindow() {
 
     socket.on("newMessage", () => {
       refetch();
+      queryClient.invalidateQueries({ queryKey: ["lastMessage", chatId] });
     });
 
     return () => {
@@ -179,7 +152,6 @@ export default function ChatWindow() {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [data?.data]);
-  //#endregion
 
   // Focus the text input automatically after rendering the chat window
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -208,6 +180,7 @@ export default function ChatWindow() {
     await sendMessage(BACKEND_URL, chatId, data.user._id, msgText);
     setMsgText("");
     refetch();
+    queryClient.invalidateQueries({ queryKey: ["lastMessage", chatId] });
   };
   //#endregion
 
@@ -224,7 +197,10 @@ export default function ChatWindow() {
                 alt="user"
                 className="size-8 rounded-full"
               />
-              <span className="text-sm">{data?.user.name}</span>
+              <div className="flex flex-col">
+                <span className="text-sm">{data?.user.name}</span>
+                <span className="text-xs text-zinc-400">last seen 12:00</span>
+              </div>
             </div>
           </Link>
           <div className="space-x-5 flex items-center">
@@ -309,4 +285,30 @@ export default function ChatWindow() {
     </div>
   );
   //#endregion
+}
+
+
+
+interface MessageBubbleProps {
+  message: string;
+  isSentByUser?: boolean;
+  time: string;
+}
+function MessageBubble({ message, isSentByUser, time }: MessageBubbleProps) {
+  return (
+    <div className={`flex ${isSentByUser ? "justify-end" : "justify-start"} `}>
+      <span
+        className={`${
+          isSentByUser
+            ? "bg-accent/40 rounded-tr-xs rounded-b-xl rounded-tl-xl"
+            : "bg-secondary rounded-tl-xs rounded-b-xl rounded-tr-xl"
+        } text-sm  m-2 mb-0 p-1.5  px-4 flex w-fit relative pr-10 ${message.length > 20 ? "min-w-sm" : "max-w-xs"}`}
+      >
+        {message}
+        <span className="text-[9px] absolute right-2 bottom-1 opacity-60">
+          {time}
+        </span>
+      </span>
+    </div>
+  );
 }

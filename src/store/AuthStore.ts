@@ -15,6 +15,7 @@ interface AuthState {
   user: User;
   setUser: (user: User) => void;
   fetchCurrentUser: () => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 const AuthStore = create<AuthState>((set) => ({
@@ -37,6 +38,23 @@ const AuthStore = create<AuthState>((set) => ({
       }
     } catch (error: unknown) {
       // Reset user on error (e.g., not authenticated)
+      set({
+        user: {
+          id: "",
+          name: "",
+          email: "",
+          profileImage: "",
+        },
+      });
+    }
+  },
+  logout: async () => {
+    const res = await axios.post(`${BACKEND_URL}/auth/logout`, {}, {
+      withCredentials: true,
+    });
+
+    console.log(res.data);
+    if (res.status === 200) {
       set({
         user: {
           id: "",

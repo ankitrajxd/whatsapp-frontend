@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { Message } from "./ChatWindow";
 
 interface Chat {
   _id: string;
@@ -30,6 +31,7 @@ export const ChatList = () => {
       } = await axios.get(`${BACKEND_URL}/users/me`, {
         withCredentials: true,
       });
+
 
       return {
         currentUserId: currentUser.id,
@@ -107,6 +109,7 @@ export const ChatList = () => {
               }
               return (
                 <UserChat
+                  chatId={chat._id.toString()}
                   key={chat._id}
                   image="/icons/user-avatar.png" // Placeholder image
                   user={otherUser}
@@ -128,11 +131,13 @@ export const ChatList = () => {
 };
 
 function UserChat({
+  chatId,
   image,
   user,
   link,
   time = "1m ago",
 }: {
+  chatId: string;
   image: string;
   user: string;
   link: string;
@@ -140,6 +145,19 @@ function UserChat({
 }) {
   const location = useLocation();
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+  // get the last message of a chat
+  const { data: lastMessage } = useQuery<Message>({
+    queryKey: ["lastMessage", chatId],
+    queryFn: async () => {
+      const { data } = await axios.get(`${BACKEND_URL}/chats/lastmessage/${chatId}`, {
+        withCredentials: true,
+      })
+      return data.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  })
+
 
   // fetch the other user
   const { data } = useQuery({
@@ -174,10 +192,10 @@ function UserChat({
         <div className="flex flex-col flex-1 gap-0">
           <p className="flex items-center justify-between text-sm">
             <span>{data?.name || user}</span>
-            <span className="text-xs text-zinc-400">{time}</span>
+            <span className="text-xs text-zinc-400">{lastMessage?.timestamp ? new Date(lastMessage.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : ""}</span>
           </p>
-          {data?.email && (
-            <span className="text-xs text-zinc-400">{data.email}</span>
+          {lastMessage?.content && (
+            <span className="text-xs text-zinc-400">{lastMessage.content.length > 20 ? lastMessage.content.slice(0, 13) + "..." : lastMessage.content}</span>
           )}
         </div>
       </div>
