@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Link, useLocation } from "react-router";
 import { useAuth } from "../hooks/useAuth";
@@ -19,6 +19,7 @@ const SideBar = () => {
   });
 
   const location = useLocation();
+  const queryClient = useQueryClient();
 
   const { logout } = useAuth();
 
@@ -62,7 +63,10 @@ const SideBar = () => {
       </div>
 
       <div className="flex items-center flex-col gap-4">
-        <button className="text-xs cursor-pointer text-zinc-400 hover:text-red-600" onClick={() => logout()}>Logout</button>
+        <button className="text-xs cursor-pointer text-zinc-400 hover:text-red-600" onClick={() => {
+          queryClient.clear();
+          logout()
+        }}>Logout</button>
         <Link to={"/settings"}>
           <div
             className={`${

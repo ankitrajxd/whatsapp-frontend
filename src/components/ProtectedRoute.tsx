@@ -27,7 +27,11 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }, [isLoading, user.id, navigate]);
 
   if (isLoading) {
-    return null; // or return a loading spinner
+    return (
+      <div className="h-screen bg-background-dark">
+        {/* You can add a loading spinner here if you want */}
+      </div>
+    );
   }
 
   if (!user.id) {

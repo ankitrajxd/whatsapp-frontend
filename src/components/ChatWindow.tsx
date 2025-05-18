@@ -199,7 +199,7 @@ export default function ChatWindow() {
               />
               <div className="flex flex-col">
                 <span className="text-sm">{data?.user.name}</span>
-                <span className="text-xs text-zinc-400">last seen 12:00</span>
+                <span className="text-[10px] text-zinc-400">last seen 12:00</span>
               </div>
             </div>
           </Link>

@@ -16,7 +16,6 @@ interface ChatResponse {
 
 export const ChatList = () => {
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-
   const { data, isLoading, error } = useQuery<ChatResponse>({
     queryKey: ["chats"],
     queryFn: async () => {
@@ -135,13 +134,11 @@ function UserChat({
   image,
   user,
   link,
-  time = "1m ago",
 }: {
   chatId: string;
   image: string;
   user: string;
   link: string;
-  time?: string;
 }) {
   const location = useLocation();
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
@@ -192,7 +189,7 @@ function UserChat({
         <div className="flex flex-col flex-1 gap-0">
           <p className="flex items-center justify-between text-sm">
             <span>{data?.name || user}</span>
-            <span className="text-xs text-zinc-400">{lastMessage?.timestamp ? new Date(lastMessage.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : ""}</span>
+            <span className="text-[10px] text-zinc-400">{lastMessage?.timestamp ? new Date(lastMessage.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : ""}</span>
           </p>
           {lastMessage?.content && (
             <span className="text-xs text-zinc-400">{lastMessage.content.length > 20 ? lastMessage.content.slice(0, 13) + "..." : lastMessage.content}</span>
