@@ -12,7 +12,7 @@ const About = () => {
       const res = await axios.get(`${BACKEND_URL}/users/${userId}`, {
         withCredentials: true,
       });
-      return res.data.message;
+      return res.data.data;
     },
     staleTime: 5 * 60 * 1000,
   });

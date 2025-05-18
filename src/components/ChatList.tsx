@@ -75,7 +75,7 @@ export const ChatList = () => {
           </div>
 
           <div>
-            <div className="flex items-center gap-1.5 mt-1.5 p-4 pt-1.5">
+            <div className="flex items-center gap-1.5 mt-1.5 p-4 pt-1.5 flex-wrap">
               <span className="text-[12px] px-2 py-0.5 bg-accent/20 text-accent rounded-full">
                 All
               </span>
@@ -92,7 +92,7 @@ export const ChatList = () => {
           </div>
 
           {/* chat list */}
-          <div className="overflow-y-auto">
+          <div className="overflow-y-auto no-scrollbar">
             {isLoading && <div className="p-4">Loading...</div>}
             {error && (
               <div className="p-4 text-red-500">Failed to load chats.</div>
@@ -157,7 +157,7 @@ function UserChat({
   });
 
   return (
-    <Link to={link} className="flex flex-col gap-2 ">
+    <Link to={link} className="flex flex-col gap-2 no-scrollbar">
       <div
         className={`flex  items-center gap-4 cursor-pointer hover:bg-surface/70 px-4 py-3 border-b border-surface/50 ${
           link === location.pathname ? "bg-surface/70" : ""
