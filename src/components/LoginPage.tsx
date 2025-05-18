@@ -1,20 +1,23 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
+import { useAuth } from "../hooks/useAuth";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("ankit@gmail.com");
   const [password, setPassword] = useState("12345678");
-
   const navigate = useNavigate();
-
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+  const { fetchCurrentUser } = useAuth();
+
 
   const mutation = useMutation({
     mutationFn: () => login(email, password),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log("Login successful", data);
       // Handle successful login, e.g., redirect to dashboard
+      await fetchCurrentUser();
       navigate("/");
     },
     onError: (error) => {
