@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, FormEvent } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import { io, Socket } from "socket.io-client";
 
-//#region Interfaces
 interface ChatUser {
   _id: string;
   name: string;
@@ -22,12 +21,13 @@ export interface Message {
 interface ChatResponse {
   user: ChatUser;
   data: Message[];
+  lastActive?: string;
 }
 
 const fetchChatData = async (
   BACKEND_URL: string,
   chatId: string | undefined
-): Promise<ChatResponse> => {
+): Promise<ChatResponse & { lastActive?: string }> => {
   try {
     if (!chatId) throw new Error("No chatId provided");
     const {
@@ -43,6 +43,18 @@ const fetchChatData = async (
       { withCredentials: true }
     );
 
+    let lastActive: string | undefined = undefined;
+    try {
+      const {
+        data: { data: lastActiveData },
+      } = await axios.get(`${BACKEND_URL}/chats/lastActive/${otherUserId}`, {
+        withCredentials: true,
+      });
+      lastActive = lastActiveData?.timestamp;
+    } catch (error) {
+      console.log(error);
+    }
+
     const {
       data: { data: chatMessages },
     } = await axios.get(`${BACKEND_URL}/chats/${chatId}/messages`, {
@@ -52,6 +64,7 @@ const fetchChatData = async (
     return {
       user: otherUserData,
       data: chatMessages,
+      lastActive,
     };
   } catch (error) {
     console.error("Error fetching chat data:", error);
@@ -102,9 +115,7 @@ const sendMessage = async (
   }
 };
 
-
 export default function ChatWindow() {
-  //#region Hooks and State
   const [msgText, setMsgText] = useState("");
   const socketRef = useRef<Socket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -119,9 +130,7 @@ export default function ChatWindow() {
     queryFn: () => fetchChatData(BACKEND_URL, chatId),
     staleTime: 5 * 60 * 1000,
   });
-  //#endregion
 
-  //#region Socket Setup
   useEffect(() => {
     if (!socketRef.current) {
       socketRef.current = io(BACKEND_URL, { withCredentials: true });
@@ -143,17 +152,14 @@ export default function ChatWindow() {
       }
       socket.off("newMessage");
     };
-  }, [chatId, refetch, BACKEND_URL]);
-  //#endregion
+  }, [chatId, refetch, BACKEND_URL, queryClient]);
 
-  //#region Scroll to Bottom on Message Change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [data?.data]);
 
-  // Focus the text input automatically after rendering the chat window
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -162,7 +168,6 @@ export default function ChatWindow() {
     }
   }, [chatId]);
 
-  //#region Handlers
   const handleClearChat = async () => {
     const res = await clearChat(BACKEND_URL, chatId);
     if (res?.status === 200) refetch();
@@ -182,9 +187,7 @@ export default function ChatWindow() {
     refetch();
     queryClient.invalidateQueries({ queryKey: ["lastMessage", chatId] });
   };
-  //#endregion
 
-  //#region Render
   return (
     <div className="flex flex-col justify-between h-full">
       {/* Header */}
@@ -199,7 +202,16 @@ export default function ChatWindow() {
               />
               <div className="flex flex-col">
                 <span className="text-sm">{data?.user.name}</span>
-                <span className="text-[10px] text-zinc-400">last seen 12:00</span>
+                <span className="text-[10px] text-zinc-400">
+                  {data?.lastActive
+                    ? `Last active: ${new Date(
+                        data.lastActive
+                      ).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}`
+                    : ""}
+                </span>
               </div>
             </div>
           </Link>
@@ -287,8 +299,6 @@ export default function ChatWindow() {
   //#endregion
 }
 
-
-
 interface MessageBubbleProps {
   message: string;
   isSentByUser?: boolean;
@@ -302,7 +312,9 @@ function MessageBubble({ message, isSentByUser, time }: MessageBubbleProps) {
           isSentByUser
             ? "bg-accent/40 rounded-tr-xs rounded-b-xl rounded-tl-xl"
             : "bg-secondary rounded-tl-xs rounded-b-xl rounded-tr-xl"
-        } text-sm  m-2 mb-0 p-1.5  px-4 flex w-fit relative pr-10 ${message.length > 20 ? "min-w-sm" : "max-w-xs"}`}
+        } text-sm  m-2 mb-0 p-1.5  px-4 flex w-fit relative pr-10 ${
+          message.length > 20 ? "min-w-sm" : "max-w-xs"
+        }`}
       >
         {message}
         <span className="text-[9px] absolute right-2 bottom-1 opacity-60">
