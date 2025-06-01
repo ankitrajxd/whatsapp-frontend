@@ -1,15 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { User } from "../contexts/AuthContext";
-import axios from "axios";
+import api from "../lib/axios";
 
 const Profile = () => {
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
   const { data } = useQuery<User>({
     queryKey: ["user"],
     queryFn: async () => {
-      const res = await axios.get(`${BACKEND_URL}/users/me`, {
-        withCredentials: true,
-      });
+      const res = await api.get("/users/me");
       return res.data.message;
     },
     staleTime: 5 * 60 * 1000,
