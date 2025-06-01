@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router";
-import { User } from "../store/AuthStore";
+import { User } from "../contexts/AuthContext";
 import axios from "axios";
 
 const About = () => {

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { User } from "../store/AuthStore";
+import { User } from "../contexts/AuthContext";
 import axios from "axios";
 
 const Profile = () => {

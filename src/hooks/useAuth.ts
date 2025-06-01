@@ -1,12 +1,10 @@
-import { AuthStore } from "../store/AuthStore";
+import { useContext } from "react";
+import { AuthContext } from "../contexts/AuthContext";
 
 export const useAuth = () => {
-  const { user, setUser, fetchCurrentUser, logout } = AuthStore();
-
-  return {
-    user,
-    setUser,
-    fetchCurrentUser,
-    logout,
-  };
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };

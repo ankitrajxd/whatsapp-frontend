@@ -1,32 +1,19 @@
 // src/components/ProtectedRoute.tsx
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
 import Welcome from "./Welcome";
 import SideBar from "./SideBar";
 
 export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, fetchCurrentUser } = useAuth();
+  const { user, isLoading } = useAuth();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        await fetchCurrentUser();
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, [fetchCurrentUser]);
-
-  useEffect(() => {
-    if (!isLoading && !user.id) {
+    if (!isLoading && !user?.id) {
       navigate("/login");
     }
-  }, [isLoading, user.id, navigate]);
+  }, [isLoading, user?.id, navigate]);
 
   if (isLoading) {
     return (
@@ -48,8 +35,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
       </>
     );
   }
-
-  if (!user.id) {
+  if (!user?.id) {
     return null;
   }
 
