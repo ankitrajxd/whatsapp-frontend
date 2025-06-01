@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 import { useAuth } from "../hooks/useAuth";
+import axios from "axios";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("ankit@gmail.com");
@@ -17,6 +18,7 @@ const LoginPage = () => {
       console.log("Login successful", data);
       // Handle successful login, e.g., redirect to dashboard
       await fetchCurrentUser();
+      await new Promise((resolve) => setTimeout(resolve, 100));
       navigate("/");
     },
     onError: (error) => {
@@ -26,20 +28,12 @@ const LoginPage = () => {
   });
 
   async function login(email: string, password: string) {
-    const res = await fetch(`${BACKEND_URL}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-      credentials: "include",
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
-      throw new Error(errorData.message || "Login failed");
-    }
-    return res.json();
+    const res = await axios.post(
+      `${BACKEND_URL}/auth/login`,
+      { email, password },
+      { withCredentials: true }
+    );
+    return res.data;
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
